@@ -1,0 +1,52 @@
+ERROR:  type "geometry" does not exist
+
+CREATE EXTENSION postgis;
+In detail,
+
+open pgAdmin
+select (click) your database
+click "SQL" icon on the bar
+run "CREATE EXTENSION postgis;" code
+
+
+
+
+------------------------------------------------5A------------------------------------------------------------------
+The Convex Hull:
+
+CREATE TABLE myArea ( 
+id SERIAL PRIMARY KEY,
+name VARCHAR(64),
+location GEOMETRY(POINT,4326));
+
+/*
+	geometry ST_MakePoint(double precision x, double precision y);
+	Note x is longitude and y is latitude
+
+*/
+
+INSERT INTO myArea (name, location) VALUES
+('point1', ST_SetSRID(ST_MakePoint(-118.288, 34.033), 4326)),
+('point2', ST_SetSRID(ST_MakePoint(-118.358, 34.073), 4326)),
+('point3', ST_SetSRID(ST_MakePoint(-118.259, 34.143), 4326)),
+('point4', ST_SetSRID(ST_MakePoint(-118.496, 34.010), 4326)),
+('point5', ST_SetSRID(ST_MakePoint(-118.267, 34.043), 4326)),
+('point6', ST_SetSRID(ST_MakePoint(-117.994, 34.081), 4326)),
+('point7', ST_SetSRID(ST_MakePoint(-118.349, 33.831), 4326)),
+('point8', ST_SetSRID(ST_MakePoint(-118.101, 34.078), 4326)),
+('point9', ST_SetSRID(ST_MakePoint(-118.168, 34.161), 4326)),
+('point10', ST_SetSRID(ST_MakePoint(-118.434, 34.053), 4326)),
+('point11', ST_SetSRID(ST_MakePoint(-118.597, 34.425), 4326));
+
+SELECT ST_AsText(ST_ConvexHull(ST_Collect(location)))
+FROM myArea;
+
+OUTPUT:
+POLYGON((-118.349 33.831,-118.496 34.01,-118.597 34.425,-117.994 34.081,-118.349 33.831))
+
+------------------------------------------------5B-----------------------------------------------------------------
+SELECT ST_Overlaps(ST_GeomFromText('POLYGON((-118.597 34.425, -118.434 34.053, -118.288 34.033, -118.101 34.078, -117.994 34.081, -118.168 34.161, -118.597 34.425))'),
+ST_GeomFromText('POLYGON((-118.358 34.073, -118.496 34.010, -118.349 33.831, -118.267 34.043, -118.259 34.143, -118.358 34.073))'));
+
+Answer: true
+
